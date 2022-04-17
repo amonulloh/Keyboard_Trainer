@@ -130,6 +130,8 @@ def testing():
                     # saved result on consol
                     print('1. ' + user_text)
                     print(res + '\n')
+                    rect_color = 'red'
+                    start_color = 'red'
 
                 elif event.key == pygame.K_BACKSPACE:
                     user_text = user_text[:-1]
