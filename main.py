@@ -1,3 +1,3 @@
-from import_me import Game
+from src.play import Game
 
 Game.testing()
