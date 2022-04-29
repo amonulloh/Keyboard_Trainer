@@ -1,15 +1,15 @@
 import pygame
-
+import os
 bg_img = 'background_keyboard.jpg'  # background image
 icon_img = 'icon.png'  # icon image
 start_img = 'start_png.png'  # start button image
 
-bg = pygame.image.load(bg_img)  # loading bg image into "bg" parameter
-icon = pygame.image.load(icon_img)  # loading icon image into "icon" param.
-start = pygame.image.load(start_img)  # loading start button img into "start" param.
+bg = pygame.image.load(os.path.join('images', bg_img))   # loading bg image into "bg" parameter
+icon = pygame.image.load(os.path.join('images', icon_img))  # loading icon image into "icon" param.
+start = pygame.image.load(os.path.join('images', start_img))  # loading start button img into "start" param.
 
 
-class Globals:
+class Gl:
     """
     This class for global parameters
     Globals saves the value of global parameters,
