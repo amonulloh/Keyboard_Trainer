@@ -28,6 +28,8 @@ class Gl:
     len_rect = 10  # the length of the rectangle where the text is inputted.
     rect_color = 'red'  # color of this rectangle.
     start_color = 'red'  # color of start button.
+    color_text = 'white'
+    count = 0
 
     text_size = 20  # the size of text, which inputting.
     header_size = 60  # the size of header text (Keyboard Trainer)

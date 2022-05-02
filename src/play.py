@@ -1,10 +1,10 @@
-import pygame
+import pygame as pg
 import pyjokes
 import time
 from src.Globals import Gl as self
 
-pygame.init()
-clock = pygame.time.Clock()
+pg.init()
+clock = pg.time.Clock()
 
 
 class Game:
@@ -25,13 +25,14 @@ class Game:
          the "pyjokes" module (which is already installed
          and imported)
         """
-        self.joke_text = pyjokes.get_joke()
+        self.joke_text = pyjokes.get_joke(language='en', category='all')
         self.joke_text = self.joke_text[:90]
+        print(self.joke_text)
         self.joke = self.joke_font.render(self.joke_text, True, 'yellow')
         self.joke2 = self.joke_font.render(self.joke_text, True, 'black')
 
     @staticmethod
-    def result():
+    def result(cost):
         """
         This function counts and check total time, accuracy
          and wpm while typing
@@ -40,20 +41,20 @@ class Game:
         wpm = 0
         percent = 100
         minute = 60
+        count = 0
         average_word = 5
         if not self.game_over:
             # calculate time
             self.total_time = time.time() - self.time_start
             # calculate accuracy
-            count = 0
-            for i, j in enumerate(self.joke_text):
+            for i in range(len(self.joke_text)):
                 try:
-                    if self.user_text[i] == j:
+                    if self.user_text[i] == self.joke_text[i]:
                         count += 1
                 except:
                     pass
             try:
-                accuracy = count / len(self.user_text) * percent
+                accuracy = count / ((len(self.user_text)) + cost) * percent
                 # calculate wpm (words per minutes)
                 wpm = len(self.user_text) * minute / (average_word * self.total_time)
             except:
@@ -77,14 +78,15 @@ class Game:
         max_len_rect, change_len_rect, max_len_text = 440, 5, 90  # max len of rect and text during input
         time_tick = 80
         help_text = ''
+        count = 0
         while play:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
+            symbols = "@$^&+=|\<>`~"
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
                     play = False
-
                 # mouse button for reStart
-                elif event.type == pygame.MOUSEBUTTONDOWN:
-                    x, y = pygame.mouse.get_pos()
+                elif event.type == pg.MOUSEBUTTONDOWN:
+                    x, y = pg.mouse.get_pos()
                     if start_x1 <= x <= start_x2 and start_y1 <= y <= start_y2:
                         Game.get_joke()
                         self.user_text = ''
@@ -96,17 +98,19 @@ class Game:
                         self.len_rect = 10
 
                 # KEYDOWN for word processing
-                elif event.type == pygame.KEYDOWN and active:
-                    if event.key == pygame.K_RETURN:
+                elif event.type == pg.KEYDOWN and active:
+                    if event.key == pg.K_RETURN:
                         active = False
                         self.game_over = True
+                        count = 0
                         # saved result on console
                         print(' ' + self.user_text)
                         print(self.res + '\n')
                         self.rect_color = 'red'
                         self.start_color = 'red'
 
-                    elif event.key == pygame.K_BACKSPACE:
+                    elif event.key == pg.K_BACKSPACE:
+                        count += 1
                         self.user_text = self.user_text[:-1]
                         if len(help_text) > 0:
                             self.user_text = help_text[len(help_text) - 1] + self.user_text
@@ -117,12 +121,18 @@ class Game:
                         if self.len_rect < max_len_rect:
                             self.len_rect += change_len_rect
                         self.user_text += event.unicode
+                        for i in symbols:
+                            try:
+                                if self.user_text[-1] == i:
+                                    self.user_text = self.user_text[:-1]
+                            except: pass
+                        # count += 1
                         if len(self.user_text) > max_len_text:
                             help_text = help_text + self.user_text[0]
                             self.user_text = self.user_text.replace(self.user_text[0], '', 1)
-            Game.result()
+            Game.result(count)
             Game.fonts()
-            pygame.display.update()
+            pg.display.update()
             clock.tick(time_tick)
 
     @staticmethod
@@ -139,11 +149,11 @@ class Game:
         self.screen.blit(self.bg, (0, 0))
 
         # rect for input text
-        pygame.draw.rect(self.screen, 'black', rect_size)
-        pygame.draw.rect(self.screen, self.rect_color, rect_size, 3)
+        pg.draw.rect(self.screen, 'black', rect_size)
+        pg.draw.rect(self.screen, self.rect_color, rect_size, 3)
 
         # start button
-        pygame.draw.rect(self.screen, self.start_color, start_size)
+        pg.draw.rect(self.screen, self.start_color, start_size)
         self.screen.blit(self.start, (start_x, start_y))
 
         # header text
@@ -166,12 +176,12 @@ class Game:
         This function is responsible for the characteristics of widgets.
         """
         # text fonts
-        text_font = pygame.font.SysFont("georgia", self.text_size)
-        header_font = pygame.font.SysFont('mannerliness', self.header_size)
+        text_font = pg.font.SysFont("georgia", self.text_size)
+        header_font = pg.font.SysFont('mannerliness', self.header_size)
         header_text = header_font.render('KEYBOARD TRAINER', True, 'white')
         header_text_2 = header_font.render('KEYBOARD TRAINER', True, 'black')
-        text = text_font.render(self.user_text, True, 'white')
-        finish_font = pygame.font.SysFont('georgia', self.finish_size)
+        text = text_font.render(self.user_text, True, self.color_text)
+        finish_font = pg.font.SysFont('georgia', self.finish_size)
         finish_key = finish_font.render('Press ENTER for finish!', True, 'white')
 
         # blit coord
