@@ -1,0 +1,5 @@
+This is the file of statics for of all time.
+
+Main Text: Chuck Norris only uses global variables. He has nothing to hide.
+Your Text: Chuck Norris
+Result: Time:10 secs   Accuracy:36%   WpM: 14

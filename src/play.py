@@ -49,12 +49,15 @@ class Game:
             # calculate accuracy
             for i in range(len(self.joke_text)):
                 try:
+                    if self.user_text[i] != self.joke_text[i]:
+                        cost += 1
+                        self.user_text = self.user_text[:-1]
                     if self.user_text[i] == self.joke_text[i]:
                         count += 1
                 except:
                     pass
             try:
-                accuracy = count / ((len(self.user_text)) + cost) * percent
+                accuracy = (count / ((len(self.user_text)) + cost)) * percent
                 # calculate wpm (words per minutes)
                 wpm = len(self.user_text) * minute / (average_word * self.total_time)
             except:
@@ -65,6 +68,8 @@ class Game:
                        '   WpM: ' + str(round(wpm))
         self.results = self.result_font.render(self.res, True, 'green')
         self.results2 = self.result_font.render(self.res, True, 'black')
+        f = open('./statics.txt')
+        self.results3 = self.last_result_font.render('Your Last ' + str(f.readlines()[-1]), True, 'Yellow')
 
     @staticmethod
     def testing():
@@ -80,7 +85,7 @@ class Game:
         help_text = ''
         count = 0
         while play:
-            symbols = "@$^&+=|\<>`~"
+            f = open('./statics.txt', 'a')
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     play = False
@@ -96,10 +101,13 @@ class Game:
                         self.rect_color = 'green'
                         self.start_color = 'green'
                         self.len_rect = 10
-
+                        count = 0
                 # KEYDOWN for word processing
                 elif event.type == pg.KEYDOWN and active:
                     if event.key == pg.K_RETURN:
+                        f.write('\n' + '\n' + 'Main Text: ' + self.joke_text + '\n')
+                        f.write('Your Text: ' + self.user_text + '\n')
+                        f.write('Result: ' + self.res)
                         active = False
                         self.game_over = True
                         count = 0
@@ -121,15 +129,27 @@ class Game:
                         if self.len_rect < max_len_rect:
                             self.len_rect += change_len_rect
                         self.user_text += event.unicode
-                        for i in symbols:
+                        for i in range(len(self.joke_text)):
                             try:
-                                if self.user_text[-1] == i:
-                                    self.user_text = self.user_text[:-1]
-                            except: pass
-                        # count += 1
+                                if self.user_text[i] != self.joke_text[i]:
+                                    count += 1
+                            except:
+                                pass
                         if len(self.user_text) > max_len_text:
                             help_text = help_text + self.user_text[0]
                             self.user_text = self.user_text.replace(self.user_text[0], '', 1)
+                    if len(self.user_text) == len(self.joke_text):
+                        f.write('\n' + '\n' + 'Main Text: ' + self.joke_text + '\n')
+                        f.write('Your Text: ' + self.user_text + '\n')
+                        f.write('Result: ' + self.res)
+                        Game.get_joke()
+                        self.user_text = ''
+                        self.len_rect = 10
+                        count = 0
+                        print(' ' + self.user_text)
+                        print(self.res + '\n')
+                        self.time_start = time.time()
+
             Game.result(count)
             Game.fonts()
             pg.display.update()
@@ -138,7 +158,7 @@ class Game:
     @staticmethod
     def display(header_text, header_text_2, text, finish_key, rect_size,
                 header2_xy, header_xy, joke2_xy, joke_xy, results2_xy,
-                results_xy, finish_xy, text_xy):
+                results_xy, results3_xy, finish_xy, text_xy):
         """
             This function displays widgets in a screen.
         """
@@ -167,6 +187,7 @@ class Game:
         # result text
         self.screen.blit(self.results2, results2_xy)
         self.screen.blit(self.results, results_xy)
+        self.screen.blit(self.results3, results3_xy)
         # finish rext
         self.screen.blit(finish_key, finish_xy)
 
@@ -194,8 +215,9 @@ class Game:
         joke_xy = self.joke.get_rect(center=(self.width / 2, 105))  # 105 is coord_y of joke
         results2_xy = self.results.get_rect(center=(self.width / 2 + 1, 311))  # 311 is coord_y of result's tone
         results_xy = self.results.get_rect(center=(self.width / 2 + 1, 310))  # 310 is coord_y of result
+        results3_xy = self.results3.get_rect(center=(self.width / 2 + 1, 351))  # 311 is coord_y of result's tone
         finish_xy = finish_key.get_rect(center=(self.width / 2, 500))  # 500 is coord_y of finish
 
         Game.display(header_text, header_text_2, text, finish_key, rect_size,
                      header2_xy, header_xy, joke2_xy, joke_xy, results2_xy,
-                     results_xy, finish_xy, text_xy)
+                     results_xy, results3_xy, finish_xy, text_xy)

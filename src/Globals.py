@@ -17,6 +17,7 @@ class Gl:
     """
     results = None
     results2 = None
+    results3 = None
     pygame.init()
     width, height = 900, 600  # width and height of screen.
     user_text = ''  # text entry option.
@@ -35,6 +36,7 @@ class Gl:
     header_size = 60  # the size of header text (Keyboard Trainer)
     finish_size = 15  # the size of finish text
     result_size = 30  # the size of finish text
+    last_result_size = 20  # the size of finish text
     start_w, start_h = 200, 64  # width and height start button.
 
     pygame.display.set_caption('Keyboard Trainer')  # show in screen caption
@@ -48,3 +50,4 @@ class Gl:
     joke = joke_font.render(joke_text, True, 'yellow')  # output text character
     joke2 = joke_font.render(joke_text, True, 'black')  # output text tint character
     result_font = pygame.font.SysFont('georgia', result_size)  # font and size result text
+    last_result_font = pygame.font.SysFont('georgia', last_result_size)  # font and size result text
